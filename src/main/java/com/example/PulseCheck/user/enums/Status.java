@@ -1,4 +1,4 @@
-package com.example.PulseCheck.userpackage.common;
+package com.example.PulseCheck.user.enums;
 
 public enum Status {
     ACTIVE,

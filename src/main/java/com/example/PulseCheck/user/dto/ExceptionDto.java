@@ -1,4 +1,4 @@
-package com.example.PulseCheck.userpackage.dtos;
+package com.example.PulseCheck.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;

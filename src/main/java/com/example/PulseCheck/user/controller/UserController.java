@@ -1,7 +1,8 @@
-package com.example.PulseCheck.userpackage.generaluser;
+package com.example.PulseCheck.user.controller;
 
-import com.example.PulseCheck.userpackage.generaluser.userdto.UserRegisterRequestDto;
-import com.example.PulseCheck.userpackage.generaluser.userdto.UserRegisterResponseDto;
+import com.example.PulseCheck.user.service.UserService;
+import com.example.PulseCheck.user.dto.UserRegisterRequestDto;
+import com.example.PulseCheck.user.dto.UserRegisterResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

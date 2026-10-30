@@ -1,6 +1,6 @@
-package com.example.PulseCheck.userpackage.generaluser.userdto;
+package com.example.PulseCheck.user.dto;
 
-import com.example.PulseCheck.userpackage.common.Role;
+import com.example.PulseCheck.user.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
 

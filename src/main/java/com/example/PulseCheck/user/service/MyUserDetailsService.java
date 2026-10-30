@@ -1,5 +1,6 @@
-package com.example.PulseCheck.userpackage.common;
+package com.example.PulseCheck.user.service;
 
+import com.example.PulseCheck.user.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,7 +14,7 @@ public class MyUserDetailsService implements UserDetailsService {
     private UserRepo userRepo;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.example.PulseCheck.userpackage.common.User user=userRepo.findByEmail(username);
+        com.example.PulseCheck.user.entity.User user=userRepo.findByEmail(username);
         if(user!=null){
             return User.builder()
                     .username(user.getEmail())
