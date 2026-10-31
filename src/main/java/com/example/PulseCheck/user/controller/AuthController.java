@@ -1,5 +1,6 @@
 package com.example.PulseCheck.user.controller;
 
+import com.example.PulseCheck.user.dto.EmailVerificationDto;
 import com.example.PulseCheck.user.dto.LoginDto;
 import com.example.PulseCheck.user.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,11 +18,35 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    @GetMapping("/login")
+    @PostMapping("/login")
     @Operation(summary = "Login As a User")
     public ResponseEntity<String> authenticate(@Valid @RequestBody LoginDto loginDto) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authService.authenticate(loginDto.getEmail(), loginDto.getPassword()));
+    }
+    @PostMapping("/getotp")
+    @Operation(summary = "get otp for email verification")
+    public ResponseEntity<String> getOtpCode() {
+        authService.sendVerificationCode();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Check Your Inbox for Otp");
+    }
+    @PostMapping("/verifyotp")
+    @Operation(summary = "Verify otp for email verification")
+    public ResponseEntity<String> verifyOtpCode(@RequestBody EmailVerificationDto emailVerificationDto) {
+        String otp= emailVerificationDto.getOtp();
+        boolean verified= authService.verifyCode(otp);
+        if(verified) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body("Your Email has been verified");
+        }
+        else {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Please enter the correct OTP");
+        }
     }
 }

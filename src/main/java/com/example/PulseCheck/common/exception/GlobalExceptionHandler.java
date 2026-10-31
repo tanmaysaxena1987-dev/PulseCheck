@@ -2,6 +2,7 @@ package com.example.PulseCheck.common.exception;
 
 import com.example.PulseCheck.user.exception.UserAlreadyExists;
 import com.example.PulseCheck.user.dto.ExceptionDto;
+import com.example.PulseCheck.user.exception.UserIsAlreadyVerified;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,13 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(UserAlreadyExists.class)
     public ResponseEntity<ExceptionDto> userWithEmailAlreadyExists(Exception ex, HttpServletRequest request){
         ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage(),"UserWithEmailAlreadyExists",409,request.getRequestURI());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(exceptionDto);
+    }
+    @ExceptionHandler(UserIsAlreadyVerified.class)
+    public ResponseEntity<ExceptionDto> userIsAlreadyVerified(Exception ex,HttpServletRequest request){
+        ExceptionDto exceptionDto=new ExceptionDto(ex.getMessage(),"UserIsAlreadyVerified",409,request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(exceptionDto);
