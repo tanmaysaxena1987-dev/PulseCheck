@@ -1,5 +1,6 @@
 package com.example.PulseCheck.common.exception;
 
+import com.example.PulseCheck.user.exception.MaximumAttemptLimitReached;
 import com.example.PulseCheck.user.exception.UserAlreadyExists;
 import com.example.PulseCheck.user.dto.ExceptionDto;
 import com.example.PulseCheck.user.exception.UserIsAlreadyVerified;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler{
         ExceptionDto exceptionDto=new ExceptionDto(ex.getMessage(),"UserIsAlreadyVerified",409,request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(exceptionDto);
+    }
+    @ExceptionHandler(MaximumAttemptLimitReached.class)
+    public ResponseEntity<ExceptionDto> MaximumAttemptLimitReached(Exception ex,HttpServletRequest request){
+        ExceptionDto exceptionDto=new ExceptionDto(ex.getMessage(),"TooManyRequest",429,request.getRequestURI());
+        return  ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
                 .body(exceptionDto);
     }
 }

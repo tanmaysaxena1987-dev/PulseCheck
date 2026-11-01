@@ -1,16 +1,20 @@
 package com.example.PulseCheck.user.service;
 
 import com.example.PulseCheck.user.entity.User;
+import com.example.PulseCheck.user.exception.MaximumAttemptLimitReached;
 import com.example.PulseCheck.user.exception.UserIsAlreadyVerified;
 import com.example.PulseCheck.user.repository.UserRepo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class AuthService {
     private final OtpService otpService;
     private final UserRepo  userRepo;
     private final EmailService emailService;
+    private final StringRedisTemplate stringRedisTemplate;
     public String authenticate(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
@@ -30,6 +35,12 @@ public class AuthService {
     public Void sendVerificationCode() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
+        String attemptsKey="otp:attempts:"+email;
+        Long attempts=stringRedisTemplate.opsForValue().increment(attemptsKey);
+        if(attempts!=null&&attempts==1)
+            stringRedisTemplate.expire(attemptsKey,5, TimeUnit.MINUTES);
+        if(attempts>5)
+            throw new MaximumAttemptLimitReached("You have reached the maximum number of attempts,Please try again later.");
         String otp=otpService.generateOtpCode();
         otpService.saveOtpCode(email, otp);
         emailService.sendOtp(email, otp);

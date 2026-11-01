@@ -11,8 +11,6 @@ public class EmailService {
     private final JavaMailSender mailSender;
 
     public void sendOtp(String email, String otp) {
-        System.out.println("mail user=[" + System.getenv("MAIL_USERNAME") + "], passLen=" +
-                (System.getenv("MAIL_PASSWORD") == null ? "null" : System.getenv("MAIL_PASSWORD").length()));
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Pulse Check- Email Verification");

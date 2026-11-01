@@ -15,7 +15,7 @@ public class OtpService {
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate redisTemplate;
     public String generateOtpCode() {
-        return String.format("%08d", secureRandom.nextInt(1_000_000));
+        return String.format("%08d", secureRandom.nextInt(100_000_000));
     }
     public Void saveOtpCode(String email,String otpCode) {
         String key="otp"+email;
