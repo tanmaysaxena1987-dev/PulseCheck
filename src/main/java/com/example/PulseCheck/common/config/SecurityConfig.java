@@ -39,7 +39,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/error",
-                                "/auth/login"
+                                "/auth/login",
+                                "/user/resetpassword",
+                                "/user/verifyidentity"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

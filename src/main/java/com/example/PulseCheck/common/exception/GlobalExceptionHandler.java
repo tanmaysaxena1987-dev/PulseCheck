@@ -1,5 +1,6 @@
 package com.example.PulseCheck.common.exception;
 
+import com.example.PulseCheck.user.exception.InvalidOtp;
 import com.example.PulseCheck.user.exception.MaximumAttemptLimitReached;
 import com.example.PulseCheck.user.exception.UserAlreadyExists;
 import com.example.PulseCheck.user.dto.ExceptionDto;
@@ -31,6 +32,13 @@ public class GlobalExceptionHandler{
         ExceptionDto exceptionDto=new ExceptionDto(ex.getMessage(),"TooManyRequest",429,request.getRequestURI());
         return  ResponseEntity
                 .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(exceptionDto);
+    }
+    @ExceptionHandler(InvalidOtp.class)
+    public ResponseEntity<ExceptionDto> InvalidOtp(Exception ex,HttpServletRequest request){
+        ExceptionDto exceptionDto=new ExceptionDto(ex.getMessage(),"InvalidOtp",400,request.getRequestURI());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exceptionDto);
     }
 }

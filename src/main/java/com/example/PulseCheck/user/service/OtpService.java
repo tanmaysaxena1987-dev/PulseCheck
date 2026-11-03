@@ -1,6 +1,7 @@
 package com.example.PulseCheck.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OtpService {
     private final SecureRandom secureRandom=new SecureRandom();
     private final PasswordEncoder passwordEncoder;
