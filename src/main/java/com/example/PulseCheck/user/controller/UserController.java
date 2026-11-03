@@ -5,8 +5,8 @@ import com.example.PulseCheck.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 @Tag(name = "User Related Operations")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
     @PostMapping("/register")
     @Operation(summary = "Register As a User")
     public ResponseEntity<UserRegisterResponseDto> register(@RequestBody @Valid UserRegisterRequestDto userRegisterRequestDto) {
@@ -35,6 +35,7 @@ public class UserController {
     @PatchMapping("/resetpassword")
     @Operation(summary = "Reset Account Password")
     public ResponseEntity<String> passwordReset(@RequestParam @Valid String email){
+        log.info("Email: "+email);
         userService.passwordReset(email);
         return ResponseEntity
                 .status(HttpStatus.OK)

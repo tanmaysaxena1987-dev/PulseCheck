@@ -1,10 +1,7 @@
 package com.example.PulseCheck.common.exception;
 
-import com.example.PulseCheck.user.exception.InvalidOtp;
-import com.example.PulseCheck.user.exception.MaximumAttemptLimitReached;
-import com.example.PulseCheck.user.exception.UserAlreadyExists;
+import com.example.PulseCheck.user.exception.*;
 import com.example.PulseCheck.user.dto.ExceptionDto;
-import com.example.PulseCheck.user.exception.UserIsAlreadyVerified;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +36,13 @@ public class GlobalExceptionHandler{
         ExceptionDto exceptionDto=new ExceptionDto(ex.getMessage(),"InvalidOtp",400,request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(exceptionDto);
+    }
+    @ExceptionHandler(UserNotFound.class)
+    public ResponseEntity<ExceptionDto> UserNotFound(Exception ex,HttpServletRequest request){
+        ExceptionDto exceptionDto=new ExceptionDto(ex.getMessage(),"UserNotFound",404,request.getRequestURI());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(exceptionDto);
     }
 }

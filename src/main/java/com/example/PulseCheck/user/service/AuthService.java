@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -30,6 +31,9 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(email, password)
         );
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userRepo.findByEmail(email);
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepo.save(user);
         return jwtService.generateToken(userDetails);
     }
     public Void sendVerificationCode() {

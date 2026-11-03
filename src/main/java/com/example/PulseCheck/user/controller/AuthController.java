@@ -35,7 +35,7 @@ public class AuthController {
     }
     @PostMapping("/verifyotp")
     @Operation(summary = "Verify otp for email verification")
-    public ResponseEntity<String> verifyOtpCode(@RequestBody EmailVerificationDto emailVerificationDto) {
+    public ResponseEntity<String> verifyOtpCode(@Valid @RequestBody EmailVerificationDto emailVerificationDto) {
         String otp= emailVerificationDto.getOtp();
         boolean verified= authService.verifyCode(otp);
         if(verified) {

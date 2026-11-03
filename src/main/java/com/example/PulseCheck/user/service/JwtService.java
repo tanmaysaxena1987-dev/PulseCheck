@@ -2,23 +2,19 @@ package com.example.PulseCheck.user.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
 import java.util.Date;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
     private final SecretKey secretKey;
     private static final Long EXPIRATION_MS = 1000L * 60 * 30;
-    public JwtService(@Value("${jwt.secret}") String secretKey) {
-        this.secretKey=Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey.trim()));
-    }
     public String generateToken(UserDetails userDetails) {
         Date date = new Date();
         return Jwts.builder()

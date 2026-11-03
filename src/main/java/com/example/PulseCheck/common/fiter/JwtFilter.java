@@ -2,11 +2,11 @@ package com.example.PulseCheck.common.fiter;
 
 import com.example.PulseCheck.user.service.JwtService;
 import com.example.PulseCheck.user.service.MyUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,13 +17,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    private JwtService jwtService;
-    private ApplicationContext context;
-    public JwtFilter(JwtService jwtService, ApplicationContext context) {
-        this.jwtService = jwtService;
-        this.context = context;
-    }
+    private final JwtService jwtService;
+    private final MyUserDetailsService myUserDetailsService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
@@ -34,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
             email= jwtService.extractEmail(token);
         }
         if(email!=null&& SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails= (UserDetails) context.getBean(MyUserDetailsService.class).loadUserByUsername(email);
+            UserDetails userDetails = myUserDetailsService.loadUserByUsername(email);
             if(jwtService.validateToken(token,userDetails)){
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
