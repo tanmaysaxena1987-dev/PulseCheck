@@ -2,6 +2,7 @@ package com.example.PulseCheck.user.service;
 
 import com.example.PulseCheck.user.dto.*;
 import com.example.PulseCheck.user.entity.User;
+import com.example.PulseCheck.user.enums.Status;
 import com.example.PulseCheck.user.exception.InvalidOtp;
 import com.example.PulseCheck.user.exception.UserNotFound;
 import com.example.PulseCheck.user.repository.UserRepo;
@@ -66,5 +67,11 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepo.findByEmail(authentication.getName());
         user.setPassword(passwordEncoder.encode(newPasswordRequestDto.getPassword()));
+    }
+
+    public void deleteAccount() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user=userRepo.findByEmail(authentication.getName());
+        userRepo.delete(user);
     }
 }

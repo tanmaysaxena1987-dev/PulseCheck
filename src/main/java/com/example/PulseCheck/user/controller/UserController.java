@@ -55,4 +55,12 @@ public class UserController {
                 .status(HttpStatus.ACCEPTED)
                 .body("Password has been saved successfully");
     }
+    @DeleteMapping("/delete-account")
+    @Operation(summary = "Delete Your Account")
+    public ResponseEntity<String> deleteAccount(){
+        userService.deleteAccount();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Account has been deleted successfully");
+    }
 }
