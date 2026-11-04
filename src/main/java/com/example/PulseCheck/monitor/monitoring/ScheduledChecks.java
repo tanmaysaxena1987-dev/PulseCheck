@@ -4,7 +4,9 @@ import com.example.PulseCheck.monitor.model.Website;
 import com.example.PulseCheck.monitor.enums.CurrentStatus;
 import com.example.PulseCheck.monitor.repo.MonitorRepo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -17,6 +19,7 @@ import java.util.concurrent.Executors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ScheduledChecks {
     private final MonitorRepo monitorRepo;
     private final RestClient restClient;
@@ -33,22 +36,24 @@ public class ScheduledChecks {
         if(Boolean.TRUE.equals(stringRedisTemplate.hasKey(key)))
             return;
 
-        String result;
+        ResponseEntity<String> response;
         CurrentStatus currentStatus;
+        String checkResult;
         try{
-            result=restClient.get()
+            response=restClient.get()
                     .uri(website.getUrl())
-                    .exchange((request,response)->{
-                        int statusCode=response.getStatusCode().value();
-                        return "HTTP "+statusCode;
-                    });
-            currentStatus=result.matches("HTTP 2\\d\\d") ? CurrentStatus.UP : CurrentStatus.DOWN;
+                    .retrieve()
+                    .toEntity(String.class);
+            int statusCode = response.getStatusCode().value();
+            currentStatus=(statusCode>=200&&statusCode<400)?CurrentStatus.UP:CurrentStatus.DOWN;
+            checkResult="HTTP "+statusCode;
         }
         catch (Exception e){
-            result="ERROR "+e.getClass().getSimpleName();
             currentStatus=CurrentStatus.DOWN;
+            checkResult="ERROR "+e.getClass().getSimpleName();
+            log.warn("Website check failed for {}", website.getUrl(), e);
         }
-        stringRedisTemplate.opsForValue().set(key,result,Duration.ofSeconds(website.getIntervalInSecond()));
+        stringRedisTemplate.opsForValue().set(key,checkResult,Duration.ofSeconds(website.getIntervalInSecond()));
 
         LocalDateTime checkedAt=LocalDateTime.now();
         website.setCurrentState(currentStatus);

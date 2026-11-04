@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler{
+    @ExceptionHandler(EmailNotVerified.class)
+    public ResponseEntity<ExceptionDto> emailNotVerified(Exception ex, HttpServletRequest request){
+        ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage(), "EmailNotVerified", 403, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exceptionDto);
+    }
+
     @ExceptionHandler(UserAlreadyExists.class)
     public ResponseEntity<ExceptionDto> userWithEmailAlreadyExists(Exception ex, HttpServletRequest request){
         ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage(),"UserWithEmailAlreadyExists",409,request.getRequestURI());

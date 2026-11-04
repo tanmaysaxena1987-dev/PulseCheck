@@ -1,9 +1,7 @@
 package com.example.PulseCheck.monitor.model;
 
 import com.example.PulseCheck.monitor.enums.CurrentStatus;
-import com.example.PulseCheck.monitor.enums.MonitorMethod;
 import com.example.PulseCheck.monitor.enums.MonitorStatus;
-import com.example.PulseCheck.monitor.enums.MonitorType;
 import com.example.PulseCheck.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,7 +30,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Monitor {
+public class Website {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -43,13 +41,8 @@ public class Monitor {
     @Column(nullable = false, length = 2048)
     private String url;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private MonitorType type;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    private MonitorMethod method;
+    private String type;
 
     @Column(nullable = false)
     private Integer intervalInSecond;
@@ -59,11 +52,11 @@ public class Monitor {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private MonitorStatus status;
+    private MonitorStatus status=MonitorStatus.ACTIVE;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private CurrentStatus currentState;
+    private CurrentStatus currentState=CurrentStatus.UNKNOWN;
 
     private LocalDateTime lastCheckedAt;
 
