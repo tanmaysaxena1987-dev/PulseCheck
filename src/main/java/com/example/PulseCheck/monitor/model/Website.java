@@ -41,9 +41,6 @@ public class Website {
     @Column(nullable = false, length = 2048)
     private String url;
 
-    @Column(nullable = false, length = 10)
-    private String type;
-
     @Column(nullable = false)
     private Integer intervalInSecond;
 
