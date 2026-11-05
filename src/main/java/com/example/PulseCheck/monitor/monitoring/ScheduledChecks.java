@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class ScheduledChecks {
     private static final DefaultRedisScript<Long> RELEASE_LOCK_SCRIPT = new DefaultRedisScript<>(
-            "if redis.call('get',KEYS[1]) == ARGV[1])"
+            "if redis.call('get',KEYS[1]) == ARGV[1]"
             +
                     "then return redis.call('del',KEYS[1])"+
                     "else return 0 end",
@@ -36,10 +36,9 @@ public class ScheduledChecks {
     private final MonitorRepo monitorRepo;
     private final RestClient restClient;
     @Scheduled(cron = "0 */1 * * * *")
-    public Void checks(){
+    public void checks(){
         for(Website website : monitorRepo.findAll())
             executorService.submit(()->checkWebsite(website));
-        return null;
     }
     private void checkWebsite(Website website){
         String id=website.getId().toString();
@@ -51,10 +50,13 @@ public class ScheduledChecks {
         if(!Boolean.TRUE.equals(acquired)){
             return;
         }
+        if(Boolean.TRUE.equals(stringRedisTemplate.hasKey(cacheKey))){
+            return;
+        }
         try{
             CheckResult result=performCheck(website);
             updateWebsite(website,result);
-            stringRedisTemplate.opsForValue().set(cacheKey, result.description,Duration.ofSeconds(website.getIntervalInSecond()));
+            stringRedisTemplate.opsForValue().set(cacheKey, result.description(),Duration.ofSeconds(website.getIntervalInSecond()));
         } catch (Exception e) {
             log.error("Unable to complete monitoring for {}",website.getUrl(),e);
         }
@@ -81,13 +83,12 @@ public class ScheduledChecks {
                     return new CheckResult(CurrentStatus.UNKNOWN,"ERROR"+e.getClass().getSimpleName());
         }
     }
-    public Void updateWebsite(Website website,CheckResult result){
+    public void updateWebsite(Website website,CheckResult result){
         LocalDateTime checkedAt=LocalDateTime.now();
-        website.setCurrentState(result.currentStatus);
+        website.setCurrentState(result.currentStatus());
         website.setLastCheckedAt(checkedAt);
         website.setNextCheckAt(checkedAt.plusSeconds(website.getIntervalInSecond()));
         monitorRepo.save(website);
-        return null;
     }
     public record CheckResult(CurrentStatus currentStatus,String description){
     }
